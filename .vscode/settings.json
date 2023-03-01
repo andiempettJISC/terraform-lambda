@@ -1,0 +1,20 @@
+{
+    "terminal.integrated.env.linux": {
+        "AWS_REGION": "us-east-1",
+        // "AWS_PROFILE": "localstack",
+        "TF_WORKSPACE": "local",
+        "TF_CLI_ARGS_init": "-backend-config='backend-config/local-dev.tf'",
+        "AWS_SECRET_ACCESS_KEY": "fake",
+        "AWS_ACCESS_KEY_ID": "fake",
+        "AWS_DEFAULT_REGION": "us-east-1",
+    },
+    "terminal.integrated.env.osx": {
+        "AWS_REGION": "us-east-1",
+        // "AWS_PROFILE": "localstack",
+        "TF_WORKSPACE": "local",
+        "TF_CLI_ARGS_init": "-backend-config='backend-config/local-dev.tf'",
+        "AWS_SECRET_ACCESS_KEY": "fake",
+        "AWS_ACCESS_KEY_ID": "fake",
+        "AWS_DEFAULT_REGION": "us-east-1",
+    }
+}

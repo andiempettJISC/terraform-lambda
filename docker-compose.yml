@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+    localstack:
+        container_name: "localstack_main"
+        image: localstack/localstack:latest
+        environment: 
+            - SERVICES=s3,lambda,iam,cloudwatch,apigateway,sts,sqs
+            - LAMBDA_EXECUTOR=docker_reuse
+            - DOCKER_HOST=unix:///var/run/docker.sock
+            - DEFAULT_REGION=us-east-1
+            - DEBUG=1
+            # - DATA_DIR=/tmp/localstack/data
+            - PORT_WEB_UI=8080
+            # - HOSTNAME_EXTERNAL=localstack
+            # - LAMBDA_DOCKER_NETWORK=localstack
+        ports:
+            - "53:53"
+            - "53:53/udp"
+            - "443:443"
+            - "4566:4566"
+            - "4571:4571"
+            - "8080:8080"
+            - "4567:4567"
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+            # - localstack_data:/tmp/localstack/data
+        # networks:
+        #     default:
+        healthcheck:
+            test:
+                - CMD
+                - bash
+                - -c
+                - awslocal s3 ls
+            interval: 5s
+            timeout: 10s
+            start_period: 10s
+    tf-bucket:
+        container_name: "localstack_tf_bucket"
+        image: amazon/aws-cli:latest 
+        command: --endpoint-url=http://localstack:4566 s3 mb s3://terraform-state
+        environment:
+            - AWS_ACCESS_KEY_ID=fake
+            - AWS_SECRET_ACCESS_KEY=fake
+            - AWS_DEFAULT_REGION=us-east-1
+        depends_on:
+          localstack:
+            condition: service_healthy
+    lambda-bucket:
+        container_name: "localstack_lambda_bucket"
+        image: amazon/aws-cli:latest 
+        command: --endpoint-url=http://localstack:4566 s3 mb s3://capsule-lambdas-local
+        environment:
+            - AWS_ACCESS_KEY_ID=fake
+            - AWS_SECRET_ACCESS_KEY=fake
+            - AWS_DEFAULT_REGION=us-east-1
+        depends_on:
+          localstack:
+            condition: service_healthy
+
+# volumes:
+#     localstack_data:
+# networks:
+#     default:
+#         external:
+#             name: localstack
